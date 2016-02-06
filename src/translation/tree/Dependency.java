@@ -1,4 +1,4 @@
-package translation;
+package translation.tree;
 
 /**
  * Created by Nataliia Kozoriz on 06.02.2016.

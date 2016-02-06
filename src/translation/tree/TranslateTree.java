@@ -1,4 +1,4 @@
-package translation;
+package translation.tree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +27,8 @@ public class TranslateTree {
             nodes.add(new TranslateNode(word[0], ++i, word[1]));
         }
 
-        for (int i = 0; i < links.size();i++ ) {
-            addLink(nodes, links.get(i));
+        for (String link : links) {
+            addLink(nodes, link);
         }
 
         root = nodes.get(0);
@@ -36,12 +36,14 @@ public class TranslateTree {
 
     private static void addLink(List<TranslateNode> nodes, String link) {
         List<String> info = parseLink(link);
-        String linkName = info.get(0);
-        TranslateNode parent = nodes.get(Integer.valueOf(info.get(2)).intValue());
-        TranslateNode child = nodes.get(Integer.valueOf(info.get(4)).intValue());
-        Dependency dependency = new Dependency(linkName, parent, child);
-        parent.addChild(dependency);
-        child.setParentDependency(dependency);
+        if (info.size() >= 5) {
+            String linkName = info.get(0);
+            TranslateNode parent = nodes.get(Integer.valueOf(info.get(2)));
+            TranslateNode child = nodes.get(Integer.valueOf(info.get(4)));
+            Dependency dependency = new Dependency(linkName, parent, child);
+            parent.addChild(dependency);
+            child.setParentDependency(dependency);
+        }
     }
 
     private static List<String> parseLink(String s) {
@@ -66,13 +68,13 @@ public class TranslateTree {
         }
     }
 
-    private static void printNode(TranslateNode node){
+    private static void printNode(TranslateNode node) {
         System.out.print("(");
-        for(Dependency dep: node.getLeftChildren()){
+        for (Dependency dep : node.getLeftChildren()) {
             printNode(dep.getChild());
         }
         System.out.print(node.getWord());
-        for(Dependency dep: node.getRightChildren()){
+        for (Dependency dep : node.getRightChildren()) {
             printNode(dep.getChild());
         }
         System.out.print(")");
