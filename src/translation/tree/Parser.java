@@ -1,4 +1,4 @@
-package translation;
+package translation.tree;
 
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
@@ -63,15 +63,15 @@ public class Parser {
     private static ArrayList<String> getDependencies(Tree parse){
         GrammaticalStructure gs = gsf.newGrammaticalStructure(parse);
         List<TypedDependency> tdl = (List<TypedDependency>) gs.typedDependencies();
-        ArrayList<String> dependencies = new ArrayList<String>();
-        for (int i = 0; i < tdl.size(); i++) {
-            dependencies.add(tdl.get(i).toString());
+        ArrayList<String> dependencies = new ArrayList<>();
+        for (TypedDependency aTdl : tdl) {
+            dependencies.add(aTdl.toString());
         }
         return dependencies;
     }
 
     private static ArrayList<String> getTags(Tree parse){
-        ArrayList<String> tags = new ArrayList<String>();
+        ArrayList<String> tags = new ArrayList<>();
         for (int i = 0; i < parse.taggedYield().size(); i++) {
             tags.add(parse.taggedYield().get(i).toString());
         }
