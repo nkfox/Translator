@@ -1,0 +1,24 @@
+<component name="libraryTable">
+  <library name="ejml-0.23">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/ejml-0.23.jar!/" />
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/slf4j-api.jar!/" />
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/slf4j-simple.jar!/" />
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/stanford-parser.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/stanford-parser-3.6.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/stanford-parser-3.6.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/ejml-0.23-src.zip!/ejml-0.23/benchmarks/src" />
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/ejml-0.23-src.zip!/ejml-0.23/benchmarks/test" />
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/ejml-0.23-src.zip!/ejml-0.23/examples/src" />
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/ejml-0.23-src.zip!/ejml-0.23/examples/test" />
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/ejml-0.23-src.zip!/ejml-0.23/experimental/src" />
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/ejml-0.23-src.zip!/ejml-0.23/experimental/test" />
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/ejml-0.23-src.zip!/ejml-0.23/src" />
+      <root url="jar://$PROJECT_DIR$/stanford-parser-full-2015-12-09/ejml-0.23-src.zip!/ejml-0.23/test" />
+    </SOURCES>
+  </library>
+</component>
