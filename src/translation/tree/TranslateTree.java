@@ -14,8 +14,6 @@ public class TranslateTree {
 
     public TranslateTree(List<String> tags, List<String> links) {
         makeTree(tags, links);
-
-        //printNode(root); System.out.println("\n");
     }
 
     private void makeTree(List<String> tags, List<String> links) {

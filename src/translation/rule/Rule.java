@@ -1,5 +1,6 @@
 package translation.rule;
 
+import translation.tree.Dependency;
 import translation.tree.Grammar;
 
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ public class Rule {
     public Rule(String rule) {
         rightPart = new ArrayList<>();
         makeRule(rule);
-        //print();
     }
 
     private void makeRule(String rule) {
@@ -28,8 +28,8 @@ public class Rule {
         makeRightPart(parts[1]);
     }
 
-    private void makeLeftPart(String leftPart) {
-
+    private void makeLeftPart(String left) {
+        leftPart = new RuleNode(left);
     }
 
     private void makeRightPart(String right) {
@@ -57,7 +57,18 @@ public class Rule {
         }
     }
 
-    public void print(){
+    public void printLeftPart(RuleNode node){
+        System.out.print(node.getTag()+"."+node.getNumber()+"."+node.getWord()+".");
+        System.out.print("(");
+        for(RuleDependency dependency: node.getChildren()){
+            System.out.print(dependency.getLink()+".");
+            printLeftPart(dependency.getChild());
+            System.out.print(",");
+        }
+        System.out.print(")");
+    }
+
+    public void printRightPart(){
         System.out.println("New tag "+newTag);
         for(List<Grammar> grammarList: rightPart){
             System.out.println("New grammarList");
