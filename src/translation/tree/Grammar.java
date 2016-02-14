@@ -25,10 +25,12 @@ public class Grammar {
     private void makeGrammar(String stringGrammar) {
         String[] parts = stringGrammar.split("\\.");
         setPOSAnfNumber(parts[0]);
-        String[] newFeatures = parts[1].split("&");
-        for (String newFeature : newFeatures) {
-            String[] featureParts = newFeature.split(":");
-            features.put(featureParts[0], featureParts[1]);
+        if (parts.length>1) {
+            String[] newFeatures = parts[1].split("&");
+            for (String newFeature : newFeatures) {
+                String[] featureParts = newFeature.split(":");
+                features.put(featureParts[0], featureParts[1]);
+            }
         }
     }
 

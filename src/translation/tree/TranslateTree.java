@@ -1,5 +1,7 @@
 package translation.tree;
 
+import translation.rule.Rule;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -14,6 +16,15 @@ public class TranslateTree {
 
     public TranslateTree(List<String> tags, List<String> links) {
         makeTree(tags, links);
+        print();System.out.println();
+    }
+
+    public void combine(List<Rule> rules) {
+        if (!root.getLeftChildren().isEmpty()) {
+            root.getLeftChildren().get(0).combine(rules);
+        } else {
+            root.getRightChildren().get(0).combine(rules);
+        }
     }
 
     private void makeTree(List<String> tags, List<String> links) {
@@ -38,9 +49,9 @@ public class TranslateTree {
             String linkName = info.get(0);
             TranslateNode parent = nodes.get(Integer.valueOf(info.get(2)));
             TranslateNode child = nodes.get(Integer.valueOf(info.get(4)));
-            Dependency dependency = new Dependency(linkName, parent, child);
-            parent.addChild(dependency);
-            child.setParentDependency(dependency);
+            child.setLink(linkName);
+            child.setParent(parent);
+            parent.addChild(child);
         }
     }
 
@@ -66,15 +77,7 @@ public class TranslateTree {
         }
     }
 
-    private static void printNode(TranslateNode node) {
-        System.out.print("(");
-        for (Dependency dep : node.getLeftChildren()) {
-            printNode(dep.getChild());
-        }
-        System.out.print(node.getWord());
-        for (Dependency dep : node.getRightChildren()) {
-            printNode(dep.getChild());
-        }
-        System.out.print(")");
+    public void print() {
+        root.print();
     }
 }

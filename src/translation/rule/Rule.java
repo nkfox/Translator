@@ -1,6 +1,5 @@
 package translation.rule;
 
-import translation.tree.Dependency;
 import translation.tree.Grammar;
 
 import java.util.ArrayList;
@@ -35,53 +34,67 @@ public class Rule {
     private void makeRightPart(String right) {
 
         String[] parts = right.split("\\$");
-        for(String part : parts){
+        for (String part : parts) {
             List<Grammar> grammars = new ArrayList<>();
             part = splitNewTag(part);
             String[] stringGrammars = part.split(",");
-            for(String stringGrammar : stringGrammars){
+            for (String stringGrammar : stringGrammars) {
                 grammars.add(new Grammar(stringGrammar));
             }
             rightPart.add(grammars);
         }
     }
 
-    private String splitNewTag(String part){
-        if (part.charAt(part.length()-1) == ')'){
+    private String splitNewTag(String part) {
+        if (part.charAt(part.length() - 1) == ')') {
             String[] parts = part.split("[()]");
             newTag = parts[1];
             return parts[0];
-        } else{
+        } else {
             newTag = null;
             return part;
         }
     }
 
-    public void printLeftPart(RuleNode node){
-        System.out.print(node.getTag()+"."+node.getNumber()+"."+node.getWord()+".");
+    public void printLeftPart(RuleNode node) {
+        if (node.getLink() != null) {
+            System.out.print(node.getLink() + ".");
+        }
+        System.out.print(node.getTag() + "." + node.getNumber() + "." + node.getWord() + ".");
         System.out.print("(");
-        for(RuleDependency dependency: node.getChildren()){
-            System.out.print(dependency.getLink()+".");
-            printLeftPart(dependency.getChild());
+        for (RuleNode child : node.getChildren()) {
+            printLeftPart(child);
             System.out.print(",");
         }
         System.out.print(")");
     }
 
-    public void printRightPart(){
-        System.out.println("New tag "+newTag);
-        for(List<Grammar> grammarList: rightPart){
+    public void printRightPart() {
+        System.out.println("New tag " + newTag);
+        for (List<Grammar> grammarList : rightPart) {
             System.out.println("New grammarList");
-            for(Grammar grammar:grammarList){
-                System.out.println("POS "+grammar.getPartOfSpeech()+"     number "+grammar.getNumber());
+            for (Grammar grammar : grammarList) {
+                System.out.println("POS " + grammar.getPartOfSpeech() + "     number " + grammar.getNumber());
                 HashMap<String, String> features = grammar.getFeatures();
                 Set<String> keys = features.keySet();
-                for(String key: keys){
-                    System.out.println("Key "+key+"     Value "+features.get(key));
+                for (String key : keys) {
+                    System.out.println("Key " + key + "     Value " + features.get(key));
                 }
 
             }
             System.out.println();
         }
+    }
+
+    public RuleNode getLeftPart() {
+        return leftPart;
+    }
+
+    public List<List<Grammar>> getRightPart() {
+        return rightPart;
+    }
+
+    public String getNewTag() {
+        return newTag;
     }
 }
