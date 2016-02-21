@@ -2,23 +2,28 @@ package translation.rule;
 
 import translation.tree.Grammar;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Nataliia Kozoriz on 06.02.2016.
  */
-public class Rule {
+public class Rule implements Comparable<Rule> {
 
     private RuleNode leftPart;
     private List<List<Grammar>> rightPart;
     private String newTag;
 
-    public Rule(String rule) {
+    public Rule() {
         rightPart = new ArrayList<>();
+    }
+
+    public Rule(String rule) {
+        this();
         makeRule(rule);
+    }
+
+    public int compareTo(Rule rule){
+        return this.getLeftPart().compare(rule.getLeftPart());
     }
 
     private void makeRule(String rule) {

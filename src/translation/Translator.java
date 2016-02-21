@@ -5,10 +5,9 @@ import translation.tree.Parser;
 import translation.tree.TranslateTree;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -48,7 +47,17 @@ public class Translator {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(rules.size());
+        //System.out.println(rules.size());
+
+        Collections.sort(rules);
+
+        /*System.out.println("------------------------------------------------------------");
+        for(Rule rule:rules){
+            rule.printLeftPart(rule.getLeftPart());
+            System.out.println();
+        }
+        System.out.println("------------------------------------------------------------");
+        */
     }
 
 }

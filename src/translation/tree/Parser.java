@@ -40,9 +40,9 @@ public class Parser {
             ArrayList<String> dependencies = getDependencies(parse);
             ArrayList<String> tags = getTags(parse);
 
-            System.out.println(dependencies);
+            /*System.out.println(dependencies);
             System.out.println(tags);
-            System.out.println();
+            System.out.println();*/
 
             trees.add( new TranslateTree(tags, dependencies));
 

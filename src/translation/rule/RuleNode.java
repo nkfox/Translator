@@ -35,7 +35,97 @@ public class RuleNode {
     }
 
     public RuleNode(String leftPart) {
-        this(leftPart,null);
+        this(leftPart, null);
+    }
+
+    public int compare(RuleNode node) {
+
+        int compare = compareLink(node);
+        if (compare != 0) return compare;
+
+        compare = compareTag(node);
+        if (compare != 0) return compare;
+
+        compare = compareWord(node);
+        if (compare != 0) return compare;
+
+        compare = compareChildren(node);
+
+        return compare;
+    }
+
+    private int compareLink(RuleNode ruleNode) {
+        if (this.link == null) {
+            if (ruleNode.link == null) {
+                return 0;
+            }
+            return -1;
+        }
+        if (ruleNode.link == null) {
+            return 1;
+        }
+        return this.link.compareTo(ruleNode.link);
+    }
+
+    public boolean parentTagOf(String childTag) {
+        if ("JJ".equals(tag) && ("JJS".equals(childTag) || "JJR".equals(childTag)) ||
+                "NN".equals(tag) && ("NNS".equals(childTag) || "NNP".equals(childTag) || "NNPS".equals(childTag)) ||
+                "RB".equals(tag) && ("RBS".equals(childTag) || "RBR".equals(childTag)) ||
+                "VB".equals(tag) && (childTag.length() > 2 && childTag.charAt(0) == 'V' && childTag.charAt(1) == 'B')) {
+            return true;
+        }
+        return false;
+    }
+
+    private int compareTag(RuleNode ruleNode) {
+        if (ruleNode.parentTagOf(this.tag)) {
+            return -1;
+        }
+        if (this.parentTagOf(ruleNode.tag)) {
+            return 1;
+        }
+        return this.tag.compareTo(ruleNode.tag);
+    }
+
+    private int compareWord(RuleNode ruleNode) {
+        if (this.word == null) {
+            if (ruleNode.word == null) {
+                return 0;
+            }
+            return 1;
+        }
+        if (ruleNode.word == null) {
+            return -1;
+        }
+        return this.word.compareTo(ruleNode.word);
+    }
+
+    private int compareChildren(RuleNode ruleNode) {
+        int compare = compareDirection(ruleNode);
+        if (compare != 0) return compare;
+
+        int index = 0;
+        while(compare==0 && index<this.children.size() && index<ruleNode.children.size()){
+            this.children.get(index).compare(ruleNode.children.get(index));
+            index++;
+        }
+        return compare;
+    }
+
+    private int compareDirection(RuleNode ruleNode) {
+        int dir = this.direction();
+        int otherDir = ruleNode.direction();
+        if (dir == otherDir) return 0;
+        if (Math.abs(dir) < Math.abs(otherDir) || Math.abs(dir) == Math.abs(otherDir) && dir > otherDir)
+            return -1;
+        return 1;
+    }
+
+    private int direction() {
+        if (this.children.isEmpty())
+            return 0;
+        if (this.children.get(0).number < this.number) return -1;
+        return 1;
     }
 
     private void getNode(String leftPart) {
@@ -114,8 +204,8 @@ public class RuleNode {
         return dependencies;
     }
 
-    public boolean isLeftChild(RuleNode child){
-        return this.number> child.number;
+    public boolean isLeftChild(RuleNode child) {
+        return this.number > child.number;
     }
 
     public String getLink() {

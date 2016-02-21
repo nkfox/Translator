@@ -40,13 +40,34 @@ public class TranslateNode {
             List<Rule> suitableRules = getSuitableRules(rules); // заменить на get firstSuitableRule?
 
             print();
-            System.out.println();
+            System.out.println("\nAll rules");
             for (Rule rule : suitableRules) {
                 rule.printLeftPart(rule.getLeftPart());
                 System.out.println();
             }
+            System.out.println();
+
+            Rule suitableRule = getSuitableRule(suitableRules);
+            if (suitableRule!=null){
+                applyRule(suitableRule);
+            }
 
         }
+    }
+
+    private void applyRule(Rule rule){
+        
+    }
+
+    private Rule getSuitableRule(List<Rule> rules) {
+        if (rules.isEmpty()) return null;
+        return rules.get(0);
+
+        /*for(Rule rule: rules){
+            if (isSuitableRule(rule.getLeftPart()))
+                return rule;
+        }
+        return null;*/
     }
 
     private List<Rule> getSuitableRules(List<Rule> rules) {
