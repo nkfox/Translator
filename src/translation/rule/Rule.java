@@ -1,7 +1,5 @@
 package translation.rule;
 
-import translation.tree.Grammar;
-
 import java.util.*;
 
 /**
@@ -10,7 +8,7 @@ import java.util.*;
 public class Rule implements Comparable<Rule> {
 
     private RuleNode leftPart;
-    private List<List<Grammar>> rightPart;
+    private List<List<Grammar>> rightPart; // ...#grammar$grammar
     private String newTag;
 
     public Rule() {

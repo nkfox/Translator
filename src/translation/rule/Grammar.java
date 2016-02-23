@@ -1,4 +1,4 @@
-package translation.tree;
+package translation.rule;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -9,9 +9,10 @@ import java.util.regex.Pattern;
  */
 public class Grammar {
 
-    private String partOfSpeech;
-    private int number;
-    private HashMap<String, String> features;
+    protected String partOfSpeech;
+    int number;
+    protected String word;
+    protected HashMap<String, String> features;
 
     public Grammar() {
         features = new HashMap<>();
@@ -73,5 +74,13 @@ public class Grammar {
 
     public void setFeatures(HashMap<String, String> features) {
         this.features = features;
+    }
+
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
     }
 }

@@ -16,7 +16,7 @@ public class TranslateTree {
 
     public TranslateTree(List<String> tags, List<String> links) {
         makeTree(tags, links);
-        //print();System.out.println();
+        print();System.out.println();
     }
 
     public void combine(List<Rule> rules) {
@@ -79,5 +79,9 @@ public class TranslateTree {
 
     public void print() {
         root.print();
+    }
+
+    public void printGrammar(){
+        root.getRightChildren().get(0).getGrammar().print();
     }
 }

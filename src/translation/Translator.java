@@ -26,6 +26,7 @@ public class Translator {
         getRules();
 
         trees.get(0).combine(rules);
+        trees.get(0).printGrammar();
     }
 
     private static void getSentences() {

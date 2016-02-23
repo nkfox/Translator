@@ -15,7 +15,7 @@ VB2(nsubj.PRP1)#М1.пад:им&чис:X&род:Y&лиц:Z,Г2.чис:x&род:y
 JJ2(advmod.RB1)#Н1,П2
 VB1(acomp.JJ2)#Г1,Н2
 VB1(xcomp.JJ2)#Г1,Н2
-NN2 det.DT1.the#C2
+NN2(det.DT1.the)#C2
 VB2(mark.IN1)#Н1,Г2
 VBG2(aux.VBD1.be)#г2.вр:прош&асп:нес(VBD)
 VB1(advcl.VB2)#Г1,Г2
@@ -114,3 +114,4 @@ VBN4(nsubjpass.NN1,aus.MD2.would,auspass.VB3.be)#С1.пад:им&чис:Y&род
 VBN4(nsubjpass.PRP1,aus.MD2.would,auspass.VB3.be)#М1.пад:им&чис:X&род:Y&лиц:Z,Г4.чис:x&род:y&лиц:z&зал:стр&вр:буд&асп:сов&нак:усл(VBC)$М1.пад:им&чис:X&род:Y&лиц:Z,Г4.чис:x&род:y&лиц:z&зал:стр&вр:буд&асп:нес&нак:усл(VBC)
 VBN5(nsubjpass.NN1,aus.MD2.would,aux.VB3.have,auxpass.VBN4.be)#С1.пад:им&чис:Y&род:Z,Г5.чис:y&род:z&зал:стр&вр:буд&асп:сов&нак:усл(VBC)
 VBN5(nsubjpass.PRP1,aus.MD2.would,aux.VB3.have,auxpass.VBN4.be)#М1.пад:им&чис:X&род:Y&лиц:Z,Г5.чис:x&род:y&лиц:z&зал:стр&вр:буд&асп:сов&нак:усл(VBC)
+VB1(nmod.NN3(case.IN2.on))#Г1,ПРЕД2,C3.пад:пред

@@ -1,5 +1,6 @@
 package translation.tree;
 
+import translation.rule.Grammar;
 import translation.rule.Rule;
 import translation.rule.RuleNode;
 
@@ -22,7 +23,7 @@ public class TranslateNode {
     private List<TranslateNode> leftChildren;
     private List<TranslateNode> rightChildren;
 
-    private Grammar grammar;
+    private TranslateGrammar grammar;
 
     public TranslateNode(String word, int number, String tag) {
         this.link = null;
@@ -32,11 +33,15 @@ public class TranslateNode {
         this.parent = null;
         this.leftChildren = new ArrayList<>();
         this.rightChildren = new ArrayList<>();
-        this.grammar = new Grammar();
+        this.grammar = new TranslateGrammar(word);
     }
 
-    public void combine(List<Rule> rules) {
-        /*while*/if (!leftChildren.isEmpty() || !rightChildren.isEmpty()) { //!!!!
+    public boolean combine(List<Rule> rules) {
+        boolean onceChanged = false;
+
+        /*while*/
+        while (!leftChildren.isEmpty() || !rightChildren.isEmpty()) { //!!!!
+
             List<Rule> suitableRules = getSuitableRules(rules); // заменить на get firstSuitableRule?
 
             print();
@@ -45,18 +50,103 @@ public class TranslateNode {
                 rule.printLeftPart(rule.getLeftPart());
                 System.out.println();
             }
-            System.out.println();
 
             Rule suitableRule = getSuitableRule(suitableRules);
-            if (suitableRule!=null){
+            if (suitableRule != null) {
                 applyRule(suitableRule);
+                onceChanged = true;
+            } else {
+                int index = 0;
+                boolean changed = false;
+                while (index < leftChildren.size() && !changed) {
+                    changed = leftChildren.get(index++).combine(rules);
+                }
+                index = 0;
+                while (index < rightChildren.size() && !changed) {
+                    changed = rightChildren.get(index++).combine(rules);
+                }
+                if (changed) {
+                    onceChanged = true;
+                } else {
+                    System.out.println("No suitable rules");
+                    return onceChanged;
+                }
             }
+            System.out.println();
 
+        }
+        return onceChanged;
+    }
+
+    private void applyRule(Rule rule) {
+        List<TranslateGrammar> newGrammar = new ArrayList<>();
+        addGrammarToList(rule.getLeftPart(), newGrammar);
+        /*for(TranslateGrammar grammar: newGrammar){
+            System.out.print(grammar.englishWord+" ");
+        }
+        System.out.println();*/
+
+        updateGrammar(newGrammar, rule.getRightPart().get(0));         // change
+
+        int mainGrammarNumber = rule.getLeftPart().getNumber() - 1;
+        TranslateGrammar mainGrammar = newGrammar.get(mainGrammarNumber);
+        for (int i = 0; i < mainGrammarNumber; i++) {
+            TranslateGrammar childGrammar = newGrammar.get(i);
+            if (childGrammar != null)
+                mainGrammar.leftChildren.add(childGrammar);
+        }
+        for (int i = mainGrammarNumber + 1; i < newGrammar.size(); i++) {
+            TranslateGrammar childGrammar = newGrammar.get(i);
+            if (childGrammar != null)
+                mainGrammar.rightChildren.add(childGrammar);
+        }
+        this.grammar = mainGrammar;
+    }
+
+    private void updateGrammar(List<TranslateGrammar> oldGrammar, List<Grammar> newGrammar) {
+        for (Grammar grammar : newGrammar) {
+            oldGrammar.get(grammar.getNumber() - 1).update(grammar);
         }
     }
 
-    private void applyRule(Rule rule){
-        
+    private boolean addGrammarToList(RuleNode node, List<TranslateGrammar> newGrammar) {
+
+        if ((node.getTag().equals(this.tag) || node.parentTagOf(this.tag)) &&
+                (node.getLink() == null || node.getLink().equals(this.link)) &&
+                (node.getWord() == null || node.getWord().equals(this.word))) {
+
+            int index = node.getNumber() - 1;
+            while (index >= newGrammar.size()) {
+                newGrammar.add(null);
+            }
+            newGrammar.set(index, this.grammar);
+
+            int leftInd = leftChildren.size() - 1;
+            int rightInd = 0;
+            List<RuleNode> ruleChildren = node.getChildren();
+            for (RuleNode ruleChild : ruleChildren) {
+                if (node.isLeftChild(ruleChild)) {
+                    leftInd = findChild(ruleChild, leftChildren, leftInd, -1, newGrammar);
+                } else {
+                    rightInd = findChild(ruleChild, rightChildren, rightInd, 1, newGrammar);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private int findChild(RuleNode ruleChild, List<TranslateNode> children, int index, int direction, List<TranslateGrammar> newGrammar) {
+        boolean found = false;
+        while (!found && (direction < 0 && index >= 0 || direction > 0 && index < children.size())) {
+            TranslateNode child = children.get(index);
+            found = child.addGrammarToList(ruleChild, newGrammar);
+            if (found)
+                children.remove(index);
+            else
+                index += direction;
+        }
+        return index;
     }
 
     private Rule getSuitableRule(List<Rule> rules) {
@@ -71,14 +161,13 @@ public class TranslateNode {
     }
 
     private List<Rule> getSuitableRules(List<Rule> rules) {
-        List<Rule> suitableRules =
-                rules.stream().filter(rule -> isSuitableRule(rule.getLeftPart())).collect(Collectors.toList());
-        return suitableRules;
+        return rules.stream().filter(rule -> isSuitableRule(rule.getLeftPart())).collect(Collectors.toList());
     }
 
     private boolean isSuitableRule(RuleNode ruleLeftPart) {
-        if (this.tag.equals(ruleLeftPart.getTag()) && //(this.link == null || this.link.equals(ruleLeftPart.getLink())) &&
-                (ruleLeftPart.getWord() == null || this.word.equals(ruleLeftPart.getWord()))) {
+        if ((ruleLeftPart.getTag().equals(this.tag) || ruleLeftPart.parentTagOf(this.tag)) &&
+                (ruleLeftPart.getLink() == null || ruleLeftPart.getLink().equals(this.link)) &&
+                (ruleLeftPart.getWord() == null || ruleLeftPart.getWord().equals(this.word))) {
 
             if (ruleLeftPart.getChildren().size() == 0) return true;
 
@@ -89,29 +178,13 @@ public class TranslateNode {
             for (RuleNode ruleChild : ruleChildren) {
                 boolean found = false;
                 if (ruleLeftPart.isLeftChild(ruleChild)) {
-                    while (!found && leftInd >= 0) {
-                        TranslateNode child = leftChildren.get(leftInd);
-                        found = child.isSuitableRule(ruleChild);
-                        if (found){
-                            firstFound = true;
-                        } else{
-                            if (!firstFound)
-                                return false;
-                        }
-                        leftInd--;
-                    }
+                    leftInd = findChild(ruleChild, leftChildren, leftInd, -1, firstFound);
                 } else {
-                    while (!found && rightInd < rightChildren.size()) {
-                        TranslateNode child = rightChildren.get(rightInd);
-                        found = child.isSuitableRule(ruleChild);
-                        if (found){
-                            firstFound = true;
-                        } else{
-                            if (!firstFound)
-                                return false;
-                        }
-                        rightInd++;
-                    }
+                    rightInd = findChild(ruleChild, rightChildren, rightInd, 1, firstFound);
+                }
+                if (leftInd >= -1 && rightInd >= -1) {
+                    found = true;
+                    firstFound = true;
                 }
                 if (!found)
                     return false;
@@ -121,40 +194,27 @@ public class TranslateNode {
         return false;
     }
 
-    public String getLink() {
-        return link;
+    private int findChild(RuleNode ruleChild, List<TranslateNode> children, int index, int direction, boolean firstFound) {
+        boolean found = false;
+        while (!found && (direction < 0 && index >= 0 || direction > 0 && index < children.size())) {
+            TranslateNode child = children.get(index);
+            found = child.isSuitableRule(ruleChild);
+            if (!found && !firstFound)
+                return -5;
+            index += direction;
+        }
+        if (found)
+            return index;
+        else
+            return -5;
     }
 
     public void setLink(String link) {
         this.link = link;
     }
 
-    public String getWord() {
-        return word;
-    }
-
-    public void setWord(String word) {
-        this.word = word;
-    }
-
     public int getNumber() {
         return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public TranslateNode getParent() {
-        return parent;
     }
 
     public void setParent(TranslateNode parent) {
@@ -165,24 +225,8 @@ public class TranslateNode {
         return leftChildren;
     }
 
-    public void setLeftChildren(List<TranslateNode> leftChildren) {
-        this.leftChildren = leftChildren;
-    }
-
     public List<TranslateNode> getRightChildren() {
         return rightChildren;
-    }
-
-    public void setRightChildren(List<TranslateNode> rightChildren) {
-        this.rightChildren = rightChildren;
-    }
-
-    public Grammar getGrammar() {
-        return grammar;
-    }
-
-    public void setGrammar(Grammar grammar) {
-        this.grammar = grammar;
     }
 
     public void addChild(TranslateNode child) {
@@ -194,10 +238,14 @@ public class TranslateNode {
         }
     }
 
+    public TranslateGrammar getGrammar() {
+        return grammar;
+    }
+
     public void print() {
         System.out.print("(");
         leftChildren.forEach(translation.tree.TranslateNode::print);
-        System.out.print(word);
+        System.out.print(link+"."+word);
         rightChildren.forEach(translation.tree.TranslateNode::print);
         System.out.print(")");
     }
