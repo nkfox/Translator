@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Created by Nataliia Kozoriz on 06.02.2016.
+ * Contains node of rule (node is lest part of a sentence)
  */
 public class RuleNode {
 
@@ -13,19 +14,6 @@ public class RuleNode {
     private int number;
     private String word;
     private List<RuleNode> children;
-
-    public RuleNode(String tag, int number) {
-        this.link = null;
-        this.tag = tag;
-        this.number = number;
-        this.word = null;
-        children = new ArrayList<>();
-    }
-
-    public RuleNode(String tag, int number, String word) {
-        this(tag, number);
-        this.word = word;
-    }
 
     public RuleNode(String leftPart, String link) {
         this.link = link;
@@ -68,13 +56,10 @@ public class RuleNode {
     }
 
     public boolean parentTagOf(String childTag) {
-        if ("JJ".equals(tag) && ("JJS".equals(childTag) || "JJR".equals(childTag)) ||
+        return "JJ".equals(tag) && ("JJS".equals(childTag) || "JJR".equals(childTag)) ||
                 "NN".equals(tag) && ("NNS".equals(childTag) || "NNP".equals(childTag) || "NNPS".equals(childTag)) ||
                 "RB".equals(tag) && ("RBS".equals(childTag) || "RBR".equals(childTag)) ||
-                "VB".equals(tag) && (childTag.length() > 2 && childTag.charAt(0) == 'V' && childTag.charAt(1) == 'B')) {
-            return true;
-        }
-        return false;
+                "VB".equals(tag) && (childTag.length() > 2 && childTag.charAt(0) == 'V' && childTag.charAt(1) == 'B');
     }
 
     private int compareTag(RuleNode ruleNode) {
@@ -105,9 +90,15 @@ public class RuleNode {
         if (compare != 0) return compare;
 
         int index = 0;
-        while(compare==0 && index<this.children.size() && index<ruleNode.children.size()){
-            this.children.get(index).compare(ruleNode.children.get(index));
+        while (compare == 0 && index < this.children.size() && index < ruleNode.children.size()) {
+            compare = this.children.get(index).compare(ruleNode.children.get(index));
             index++;
+        }
+        if (compare == 0) {
+            if (this.children.size() > ruleNode.children.size())
+                return -1;
+            else if (this.children.size() < ruleNode.children.size())
+                return 1;
         }
         return compare;
     }
@@ -154,6 +145,20 @@ public class RuleNode {
         i++;
         if (i < leftPart.length()) {
             getDependencies(leftPart.substring(i, leftPart.length() - 1));
+        }
+
+        sortChildren();
+    }
+
+    private void sortChildren(){
+        for(int i=0;i<children.size()-1;i++) {
+            for(int j=i+1;j<children.size();j++){
+                if (Math.abs(children.get(i).number-this.number)> Math.abs(children.get(j).number-this.number)){
+                    RuleNode temp = children.get(i);
+                    children.set(i,children.get(j));
+                    children.set(j,temp);
+                }
+            }
         }
     }
 
@@ -212,43 +217,19 @@ public class RuleNode {
         return link;
     }
 
-    public void setLink(String link) {
-        this.link = link;
-    }
-
     public String getTag() {
         return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
     }
 
     public int getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
     public String getWord() {
         return word;
     }
 
-    public void setWord(String word) {
-        this.word = word;
-    }
-
-    public void setChildren(List<RuleNode> children) {
-        this.children = children;
-    }
-
     public List<RuleNode> getChildren() {
         return children;
-    }
-
-    public void addChild(RuleNode child) {
-        children.add(child);
     }
 }

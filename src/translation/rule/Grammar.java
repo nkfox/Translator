@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 /**
  * Created by Nataliia Kozoriz on 06.02.2016.
+ * Contains grammar of rule
  */
 public class Grammar {
 
@@ -56,31 +57,15 @@ public class Grammar {
         return partOfSpeech;
     }
 
-    public void setPartOfSpeech(String partOfSpeech) {
-        this.partOfSpeech = partOfSpeech;
-    }
-
     public int getNumber() {
         return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
     }
 
     public HashMap<String, String> getFeatures() {
         return features;
     }
 
-    public void setFeatures(HashMap<String, String> features) {
-        this.features = features;
-    }
-
     public String getWord() {
         return word;
-    }
-
-    public void setWord(String word) {
-        this.word = word;
     }
 }

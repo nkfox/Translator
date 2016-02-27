@@ -4,6 +4,7 @@ import java.util.*;
 
 /**
  * Created by Nataliia Kozoriz on 06.02.2016.
+ * Contains rule
  */
 public class Rule implements Comparable<Rule> {
 
@@ -97,7 +98,4 @@ public class Rule implements Comparable<Rule> {
         return rightPart;
     }
 
-    public String getNewTag() {
-        return newTag;
-    }
 }

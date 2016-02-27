@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 /**
  * Created by Nataliia Kozoriz on 06.02.2016.
+ * Contains tree of a sentence.
  */
 public class TranslateTree {
 
@@ -16,15 +17,11 @@ public class TranslateTree {
 
     public TranslateTree(List<String> tags, List<String> links) {
         makeTree(tags, links);
-        print();System.out.println();
+        //print();System.out.println();
     }
 
     public void combine(List<Rule> rules) {
-        if (!root.getLeftChildren().isEmpty()) {
-            root.getLeftChildren().get(0).combine(rules);
-        } else {
-            root.getRightChildren().get(0).combine(rules);
-        }
+        root.getRightChildren().get(0).combine(rules);
     }
 
     private void makeTree(List<String> tags, List<String> links) {
@@ -45,12 +42,11 @@ public class TranslateTree {
 
     private static void addLink(List<TranslateNode> nodes, String link) {
         List<String> info = parseLink(link);
-        if (info.size() >= 5) {
+        if (info != null && info.size() >= 5) {
             String linkName = info.get(0);
             TranslateNode parent = nodes.get(Integer.valueOf(info.get(2)));
             TranslateNode child = nodes.get(Integer.valueOf(info.get(4)));
             child.setLink(linkName);
-            child.setParent(parent);
             parent.addChild(child);
         }
     }
