@@ -1,5 +1,7 @@
 package translation.rule;
 
+import com.sun.istack.internal.NotNull;
+
 import java.util.*;
 
 /**
@@ -21,7 +23,7 @@ public class Rule implements Comparable<Rule> {
         makeRule(rule);
     }
 
-    public int compareTo(Rule rule){
+    public int compareTo(@NotNull Rule rule){
         return this.getLeftPart().compare(rule.getLeftPart());
     }
 
