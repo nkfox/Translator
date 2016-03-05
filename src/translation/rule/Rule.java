@@ -14,6 +14,10 @@ public class Rule implements Comparable<Rule> {
     private List<List<Grammar>> rightPart; // ...#grammar$grammar
     private String newTag;
 
+    public static int amount=0;
+    public static int maxLen=0;
+    public static int sum=0;
+
     public Rule() {
         rightPart = new ArrayList<>();
     }
@@ -21,6 +25,9 @@ public class Rule implements Comparable<Rule> {
     public Rule(String rule) {
         this();
         makeRule(rule);
+        amount++;
+        maxLen=Math.max(maxLen,rule.length());
+        sum+=rule.length();
     }
 
     public int compareTo(@NotNull Rule rule){
@@ -66,13 +73,21 @@ public class Rule implements Comparable<Rule> {
         if (node.getLink() != null) {
             System.out.print(node.getLink() + ".");
         }
-        System.out.print(node.getTag() + "." + node.getNumber() + "." + node.getWord() + ".");
-        System.out.print("(");
-        for (RuleNode child : node.getChildren()) {
-            printLeftPart(child);
-            System.out.print(",");
+        System.out.print(node.getTag() + node.getNumber());
+        if (node.getWord()!=null){
+            System.out.print( "." + node.getWord());
         }
-        System.out.print(")");
+        if (node.getChildren().size()>0) {
+            System.out.print("(");
+            int i=0;
+            for (RuleNode child : node.getChildren()) {
+                printLeftPart(child);
+                if (i<node.getChildren().size()-1)
+                    System.out.print(",");
+                i++;
+            }
+            System.out.print(")");
+        }
     }
 
     public void printRightPart() {
@@ -90,6 +105,22 @@ public class Rule implements Comparable<Rule> {
             }
             System.out.println();
         }
+        /*
+         System.out.println("New tag " + newTag);
+        for (List<Grammar> grammarList : rightPart) {
+            System.out.println("New grammarList");
+            for (Grammar grammar : grammarList) {
+                System.out.println("POS " + grammar.getPartOfSpeech() + "     number " + grammar.getNumber());
+                HashMap<String, String> features = grammar.getFeatures();
+                Set<String> keys = features.keySet();
+                for (String key : keys) {
+                    System.out.println("Key " + key + "     Value " + features.get(key));
+                }
+
+            }
+            System.out.println();
+        }
+         */
     }
 
     public RuleNode getLeftPart() {

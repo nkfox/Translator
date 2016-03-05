@@ -88,10 +88,11 @@ public class TranslateNode {
 
         int mainGrammarNumber = rule.getLeftPart().getNumber() - 1;
         TranslateGrammar mainGrammar = newGrammar.get(mainGrammarNumber);
+        int pos=0;
         for (int i = 0; i < mainGrammarNumber; i++) {
             TranslateGrammar childGrammar = newGrammar.get(i);
             if (childGrammar != null)
-                mainGrammar.leftChildren.add(childGrammar);
+                mainGrammar.leftChildren.add(pos++,childGrammar);
         }
         for (int i = mainGrammarNumber + 1; i < newGrammar.size(); i++) {
             TranslateGrammar childGrammar = newGrammar.get(i);

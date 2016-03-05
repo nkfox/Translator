@@ -19,6 +19,7 @@ public class Translator {
 
     private static List<String> sentences = new ArrayList<>();
     private static List<Rule> rules = new ArrayList<>();
+    private static List<String> r = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -50,22 +51,27 @@ public class Translator {
                 content = in.nextLine();
                 if (content.length() > 0) {
                     rules.add(new Rule(content));
+                    r.add(content);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //System.out.println(rules.size());
+        System.out.println(Rule.amount+"  "+Rule.maxLen+"  "+Rule.sum);
 
         Collections.sort(rules);
+        /*Collections.sort(r);
+        for(String s:r){
+            System.out.println(s);
+        }*/
 
         /*System.out.println("------------------------------------------------------------");
         for (Rule rule : rules) {
             rule.printLeftPart(rule.getLeftPart());
+            //rule.printRightPart();
             System.out.println();
         }
-        System.out.println("------------------------------------------------------------");
-        */
+        System.out.println("------------------------------------------------------------");*/
     }
 
 }
