@@ -9,11 +9,11 @@ import java.util.List;
  */
 public class RuleNode {
 
-    private String link;
-    private String tag;
-    private int number;
-    private String word;
-    private List<RuleNode> children;
+    String link;
+    String tag;
+    int number;
+    String word;
+    List<RuleNode> children;
 
     public RuleNode(String leftPart, String link) {
         this.link = link;
@@ -122,41 +122,37 @@ public class RuleNode {
     private void getNode(String leftPart) {
         StringBuilder info = new StringBuilder();
         int i = 0;
-        while (leftPart.charAt(i) >= 'A' && leftPart.charAt(i) <= 'Z' || leftPart.charAt(i) == '$') {
+        while (leftPart.charAt(i) >= 'A' && leftPart.charAt(i) <= 'Z' || leftPart.charAt(i) == '$')
             info.append(leftPart.charAt(i++));
-        }
         this.tag = info.toString();
 
         info = new StringBuilder();
-        while (i < leftPart.length() && leftPart.charAt(i) >= '0' && leftPart.charAt(i) <= '9') {
+        while (i < leftPart.length() && leftPart.charAt(i) >= '0' && leftPart.charAt(i) <= '9')
             info.append(leftPart.charAt(i++));
-        }
         this.number = Integer.valueOf(info.toString());
 
         if (i < leftPart.length() && leftPart.charAt(i) == '.') {
             i++;
             info = new StringBuilder();
-            while (i < leftPart.length() && leftPart.charAt(i) >= 'a' && leftPart.charAt(i) <= 'z') {
+            while (i < leftPart.length() && leftPart.charAt(i) >= 'a' && leftPart.charAt(i) <= 'z')
                 info.append(leftPart.charAt(i++));
-            }
             this.word = info.toString();
         }
 
         i++;
-        if (i < leftPart.length()) {
+        if (i < leftPart.length())
             getDependencies(leftPart.substring(i, leftPart.length() - 1));
-        }
 
         sortChildren();
     }
 
-    private void sortChildren(){
-        for(int i=0;i<children.size()-1;i++) {
-            for(int j=i+1;j<children.size();j++){
-                if (Math.abs(children.get(i).number-this.number)> Math.abs(children.get(j).number-this.number)){
+    private void sortChildren() {
+        for (int i = 0; i < children.size() - 1; i++) {
+            for (int j = i + 1; j < children.size(); j++) {
+                if (Math.abs(children.get(i).number - this.number) > Math.abs(children.get(j).number - this.number)) {
                     RuleNode temp = children.get(i);
-                    children.set(i,children.get(j));
-                    children.set(j,temp);
+                    children.set(i, children.get(j));
+                    children.set(j, temp);
                 }
             }
         }

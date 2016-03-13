@@ -8,6 +8,7 @@ import edu.stanford.nlp.trees.*;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Nataliia Kozoriz on 06.02.2016.
@@ -16,16 +17,16 @@ import java.util.List;
  */
 public class Parser {
 
-    private static LexicalizedParser lp;
-    private static TreebankLanguagePack tlp;
-    private static GrammaticalStructureFactory gsf;
+    private static LexicalizedParser lexicalizedParser;
+    private static TreebankLanguagePack treebankLanguagePack;
+    private static GrammaticalStructureFactory grammaticalStructureFactory;
 
     static {
         String grammar = "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz";
         String[] options = {"-maxLength", "80", "-retainTmpSubcategories", "-outputFormat", "typedDependencies"};
-        lp = LexicalizedParser.loadModel(grammar, options);
-        tlp = lp.getOp().langpack();
-        gsf = tlp.grammaticalStructureFactory();
+        lexicalizedParser = LexicalizedParser.loadModel(grammar, options);
+        treebankLanguagePack = lexicalizedParser.getOp().langpack();
+        grammaticalStructureFactory = treebankLanguagePack.grammaticalStructureFactory();
     }
 
     private Parser() {
@@ -36,42 +37,33 @@ public class Parser {
 
         List<TranslateTree> trees = new ArrayList<>();
         for (List<? extends HasWord> sentence : sentences) {
-            Tree parse = lp.parse(sentence);
-            ArrayList<String> dependencies = getDependencies(parse);
-            ArrayList<String> tags = getTags(parse);
-
-            /*System.out.println(dependencies);
-            System.out.println(tags);
-            System.out.println();*/
-
+            Tree parse = lexicalizedParser.parse(sentence);
+            List<String> dependencies = getDependencies(parse);
+            List<String> tags = getTags(parse);
             trees.add( new TranslateTree(tags, dependencies));
-
         }
         return trees;
     }
 
     private static List<List<? extends HasWord>> parse(List<String> stringSentences) {
-        List<List<? extends HasWord>> tmp = new ArrayList<>();
-        for (String sent2 : stringSentences) {
-            Tokenizer<? extends HasWord> toke = tlp.getTokenizerFactory().getTokenizer(new StringReader(sent2));
-            List<? extends HasWord> sentence2 = toke.tokenize();
-            tmp.add(sentence2);
+        List<List<? extends HasWord>> sentences = new ArrayList<>();
+        for (String stringSentence : stringSentences) {
+            Tokenizer<? extends HasWord> toke =
+                    treebankLanguagePack.getTokenizerFactory().getTokenizer(new StringReader(stringSentence));
+            List<? extends HasWord> sentence = toke.tokenize();
+            sentences.add(sentence);
         }
-        return tmp;
+        return sentences;
     }
 
-    private static ArrayList<String> getDependencies(Tree parse){
-        GrammaticalStructure gs = gsf.newGrammaticalStructure(parse);
-        List<TypedDependency> tdl = (List<TypedDependency>) gs.typedDependencies();
-        ArrayList<String> dependencies = new ArrayList<>();
-        for (TypedDependency aTdl : tdl) {
-            dependencies.add(aTdl.toString());
-        }
-        return dependencies;
+    private static List<String> getDependencies(Tree parse){
+        GrammaticalStructure grammaticalStructure = grammaticalStructureFactory.newGrammaticalStructure(parse);
+        List<TypedDependency> typedDependencies = (List<TypedDependency>) grammaticalStructure.typedDependencies();
+        return typedDependencies.stream().map(TypedDependency::toString).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private static ArrayList<String> getTags(Tree parse){
-        ArrayList<String> tags = new ArrayList<>();
+    private static List<String> getTags(Tree parse){
+        List<String> tags = new ArrayList<>();
         for (int i = 0; i < parse.taggedYield().size(); i++) {
             tags.add(parse.taggedYield().get(i).toString());
         }

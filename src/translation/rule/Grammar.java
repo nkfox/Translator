@@ -1,6 +1,7 @@
 package translation.rule;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,12 +12,19 @@ import java.util.regex.Pattern;
 public class Grammar {
 
     protected String partOfSpeech;
-    int number;
+    protected int number;
     protected String word;
-    protected HashMap<String, String> features;
+    protected HashMap<String, Feature> features;
 
     public Grammar() {
         features = new HashMap<>();
+    }
+
+    public Grammar(String partOfSpeech, int number, String word) {
+        this();
+        this.partOfSpeech = partOfSpeech;
+        this.number = number;
+        this.word = word;
     }
 
     public Grammar(String grammar) {
@@ -26,17 +34,17 @@ public class Grammar {
 
     private void makeGrammar(String stringGrammar) {
         String[] parts = stringGrammar.split("\\.");
-        setPOSAnfNumber(parts[0]);
-        if (parts.length>1) {
+        setPOSAndNumber(parts[0]);
+        if (parts.length > 1) {
             String[] newFeatures = parts[1].split("&");
             for (String newFeature : newFeatures) {
                 String[] featureParts = newFeature.split(":");
-                features.put(featureParts[0], featureParts[1]);
+                features.put(featureParts[0], new Feature(featureParts[1]));
             }
         }
     }
 
-    private void setPOSAnfNumber(String posAndNumber) {
+    private void setPOSAndNumber(String posAndNumber) {
         StringBuilder pos = new StringBuilder("");
         int i = 0;
         while (posAndNumber.charAt(i) > '9') {
@@ -61,11 +69,22 @@ public class Grammar {
         return number;
     }
 
-    public HashMap<String, String> getFeatures() {
+    public HashMap<String, Feature> getFeatures() {
         return features;
     }
 
     public String getWord() {
         return word;
+    }
+
+    @Override
+    public Grammar clone() {
+        Grammar cloned = new Grammar(partOfSpeech, number, word);
+        Set<String> featureNames = features.keySet();
+        for (String featureName : featureNames) {
+            Feature feature = this.features.get(featureName);
+            cloned.features.put(featureName, feature.clone());
+        }
+        return cloned;
     }
 }

@@ -1,7 +1,7 @@
 package translation.tree;
 
+import translation.rule.Feature;
 import translation.rule.Grammar;
-import edu.stanford.nlp.process.Morphology;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +17,10 @@ public class TranslateGrammar extends translation.rule.Grammar {
     List<TranslateGrammar> leftChildren;
     List<TranslateGrammar> rightChildren;
 
-    TranslateGrammar(String word,String pos) {
+    public TranslateGrammar(String word) {
         leftChildren = new ArrayList<>();
         rightChildren = new ArrayList<>();
-        this.englishWord = word;//new Morphology().lemma(word, pos);
+        this.englishWord = word;
     }
 
     public void update(Grammar grammar) {
@@ -29,9 +29,11 @@ public class TranslateGrammar extends translation.rule.Grammar {
             this.word = grammar.getWord();
         Set<String> featureNames = grammar.getFeatures().keySet();
         for (String featureName : featureNames) {
-            //String feature = this.features.get(featureName);
-            //pad:X
-            this.features.put(featureName, grammar.getFeatures().get(featureName));
+            Feature feature = this.features.get(featureName);
+            if (feature != null)
+                feature.setValue(grammar.getFeatures().get(featureName));
+            else
+                this.features.put(featureName, grammar.getFeatures().get(featureName));
         }
     }
 
@@ -40,9 +42,29 @@ public class TranslateGrammar extends translation.rule.Grammar {
         System.out.println(englishWord + " " + partOfSpeech);
         Set<String> featuresNames = features.keySet();
         for (String f : featuresNames) {
-            System.out.println(f + "." + features.get(f));
+            System.out.print(f);
+            features.get(f).print();
+            System.out.println();
         }
         System.out.println();
         rightChildren.forEach(translation.tree.TranslateGrammar::print);
+    }
+
+    @Override
+    public TranslateGrammar clone() {
+        TranslateGrammar cloned = new TranslateGrammar(englishWord);
+        cloned.number = this.number;
+        cloned.partOfSpeech = this.partOfSpeech;
+        cloned.word = this.word;
+        Set<String> featureNames = features.keySet();
+        for (String featureName : featureNames) {
+            Feature feature = this.features.get(featureName);
+            cloned.features.put(featureName, feature.clone());
+        }
+        for (TranslateGrammar child : leftChildren)
+            cloned.leftChildren.add(child.clone());
+        for (TranslateGrammar child : rightChildren)
+            cloned.rightChildren.add(child.clone());
+        return cloned;
     }
 }

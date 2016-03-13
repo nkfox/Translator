@@ -19,7 +19,7 @@ public class Translator {
 
     private static List<String> sentences = new ArrayList<>();
     private static List<Rule> rules = new ArrayList<>();
-    private static List<String> r = new ArrayList<>();
+    //private static List<String> r = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -33,6 +33,7 @@ public class Translator {
         System.out.println("\n");
 
         trees.get(1).combine(rules);
+        System.out.println("\n--------------------------------------------------------------------------\n");
         trees.get(1).printGrammar();
     }
 
@@ -51,7 +52,7 @@ public class Translator {
                 content = in.nextLine();
                 if (content.length() > 0) {
                     rules.add(new Rule(content));
-                    r.add(content);
+                    //r.add(content);
                 }
             }
         } catch (Exception e) {
