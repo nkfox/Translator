@@ -6,6 +6,7 @@ import translation.rule.Grammar;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by Nataliia Kozoriz on 23.02.2016.
@@ -61,10 +62,8 @@ public class TranslateGrammar extends translation.rule.Grammar {
             Feature feature = this.features.get(featureName);
             cloned.features.put(featureName, feature.clone());
         }
-        for (TranslateGrammar child : leftChildren)
-            cloned.leftChildren.add(child.clone());
-        for (TranslateGrammar child : rightChildren)
-            cloned.rightChildren.add(child.clone());
+        cloned.leftChildren.addAll(leftChildren.stream().map(TranslateGrammar::clone).collect(Collectors.toList()));
+        cloned.rightChildren.addAll(rightChildren.stream().map(TranslateGrammar::clone).collect(Collectors.toList()));
         return cloned;
     }
 
@@ -72,7 +71,7 @@ public class TranslateGrammar extends translation.rule.Grammar {
         return englishWord;
     }
 
-    private String getFeature(String name){
+    private String getFeature(String name) {
         Feature feature = features.get(name);
         if (feature == null)
             return null;
@@ -96,7 +95,7 @@ public class TranslateGrammar extends translation.rule.Grammar {
     }
 
     public String getGender() {
-                return getFeature("род");
+        return getFeature("род");
     }
 
     public String getCase() {
@@ -117,5 +116,12 @@ public class TranslateGrammar extends translation.rule.Grammar {
 
     public String getComparison() {
         return getFeature("сс");
+    }
+
+    public void setGender(String name) {
+        Feature feature = features.get("род");
+        if (feature == null)
+            feature = new Feature("род");
+        feature.setValue(name);
     }
 }
