@@ -45,6 +45,10 @@ public class Feature {
         return dependencies;
     }
 
+    public String getValue() {
+        return value;
+    }
+
     @Override
     public Feature clone() {
         Feature cloned = new Feature(value);

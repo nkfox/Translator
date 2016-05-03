@@ -67,4 +67,55 @@ public class TranslateGrammar extends translation.rule.Grammar {
             cloned.rightChildren.add(child.clone());
         return cloned;
     }
+
+    public String getEnglishWord() {
+        return englishWord;
+    }
+
+    private String getFeature(String name){
+        Feature feature = features.get(name);
+        if (feature == null)
+            return null;
+        return feature.getValue();
+    }
+
+    public String getVoice() {
+        return getFeature("зал");
+    }
+
+    public String getTense() {
+        return getFeature("вр");
+    }
+
+    public String getPerson() {
+        return getFeature("числ");
+    }
+
+    public String getNum() {
+        return getFeature("зал");
+    }
+
+    public String getGender() {
+                return getFeature("род");
+    }
+
+    public String getCase() {
+        return getFeature("пад");
+    }
+
+    public String getAspect() {
+        return getFeature("асп");
+    }
+
+    public String getAnimacy() {
+        return getFeature("од");
+    }
+
+    public String getMood() {
+        return getFeature("накл");
+    }
+
+    public String getComparison() {
+        return getFeature("сс");
+    }
 }
