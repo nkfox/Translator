@@ -120,6 +120,7 @@ public class RuleNode {
     }
 
     private void getNode(String leftPart) {
+        leftPart = leftPart.replaceAll("[\uFEFF-\uFFFF]", "");
         StringBuilder info = new StringBuilder();
         int i = 0;
         while (leftPart.charAt(i) >= 'A' && leftPart.charAt(i) <= 'Z' || leftPart.charAt(i) == '$')

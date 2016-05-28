@@ -24,6 +24,23 @@ public class TranslateGrammar extends translation.rule.Grammar {
         this.englishWord = word;
     }
 
+    public TranslateGrammar(String word, boolean b) {
+        leftChildren = new ArrayList<>();
+        rightChildren = new ArrayList<>();
+        this.englishWord = word;
+        partOfSpeech = "C";
+        this.word = "пользователь";
+
+        Feature f = new Feature("числ");
+        f.setValue("ед");
+        features.put("числ", f);
+
+        f = new Feature("пад");
+        f.setValue("им");
+        features.put("пад", f);
+
+    }
+
     public void update(Grammar grammar) {
         this.partOfSpeech = grammar.getPartOfSpeech();
         if (grammar.getWord() != null)
@@ -71,6 +88,10 @@ public class TranslateGrammar extends translation.rule.Grammar {
         return englishWord;
     }
 
+    public String getPartOfSpeech() {
+        return super.getPartOfSpeech();
+    }
+
     private String getFeature(String name) {
         Feature feature = features.get(name);
         if (feature == null)
@@ -87,11 +108,11 @@ public class TranslateGrammar extends translation.rule.Grammar {
     }
 
     public String getPerson() {
-        return getFeature("числ");
+        return getFeature("лиц");
     }
 
     public String getNum() {
-        return getFeature("зал");
+        return getFeature("числ");
     }
 
     public String getGender() {
@@ -120,8 +141,12 @@ public class TranslateGrammar extends translation.rule.Grammar {
 
     public void setGender(String name) {
         Feature feature = features.get("род");
-        if (feature == null)
+        if (feature != null)
+            feature.setValue(name);
+        else {
             feature = new Feature("род");
-        feature.setValue(name);
+            feature.setValue(name);
+            features.put("род", feature);
+        }
     }
 }

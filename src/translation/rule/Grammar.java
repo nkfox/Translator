@@ -77,6 +77,10 @@ public class Grammar {
         return word;
     }
 
+    public void setWord(String word) {
+        this.word = word;
+    }
+
     @Override
     public Grammar clone() {
         Grammar cloned = new Grammar(partOfSpeech, number, word);
