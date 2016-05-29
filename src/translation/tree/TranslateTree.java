@@ -44,15 +44,24 @@ public class TranslateTree {
         root = nodes.get(0);
     }
 
-    private static void addLink(List<TranslateNode> nodes, String link) {
+    private static boolean addLink(List<TranslateNode> nodes, String link) {
         List<String> info = parseLink(link);
         if (info != null && info.size() >= 5) {
             String linkName = info.get(0);
             TranslateNode parent = nodes.get(Integer.valueOf(info.get(2)));
             TranslateNode child = nodes.get(Integer.valueOf(info.get(4)));
-            child.link = linkName;
-            parent.addChild(child);
+            if (linkName.equals("mwe") || linkName.equals("prt")){
+                parent.word = parent.word + " " + child.word;
+                for(TranslateGrammar grammar :parent.grammar){
+                    grammar.englishWord = parent.word;
+                }
+
+            } else {
+                child.link = linkName;
+                parent.addChild(child);
+            }
         }
+        return false;
     }
 
     private static List<String> parseLink(String s) {

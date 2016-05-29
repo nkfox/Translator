@@ -229,4 +229,22 @@ public class RuleNode {
     public List<RuleNode> getChildren() {
         return children;
     }
+
+    @Override
+    public String toString(){
+        StringBuilder s = new StringBuilder();
+        s.append(link);
+        s.append(".").append(tag);
+        s.append(number);
+        if (word != null)
+            s.append(".").append(word);
+        if (children.size()>0) {
+            s.append("(");
+            for (RuleNode child : children) {
+                s.append(child.toString());
+            }
+            s.append(")");
+        }
+        return s.toString();
+    }
 }

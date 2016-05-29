@@ -149,4 +149,13 @@ public class TranslateGrammar extends translation.rule.Grammar {
             features.put("род", feature);
         }
     }
+
+    @Override
+    public String toString(){
+        StringBuilder s = new StringBuilder();
+        s.append(super.toString());
+        if (englishWord != null)
+            s.append(".").append(englishWord);
+        return s.toString();
+    }
 }

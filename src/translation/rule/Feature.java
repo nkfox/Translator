@@ -34,11 +34,7 @@ public class Feature {
     }
 
     public void print() {
-        if (value != null)
-            System.out.print("." + value);
-        for (String dep : dependencies) {
-            System.out.print("." + dep);
-        }
+        System.out.print(toString());
     }
 
     public List<String> getDependencies() {
@@ -54,5 +50,16 @@ public class Feature {
         Feature cloned = new Feature(value);
         cloned.dependencies.addAll(dependencies.stream().collect(Collectors.toList()));
         return cloned;
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder s = new StringBuilder();
+        if (value != null)
+            s.append(".").append(value);
+        for (String dep : dependencies) {
+            s.append(".").append(dep);
+        }
+        return s.toString();
     }
 }

@@ -336,4 +336,19 @@ public class TranslateNode {
         rightChildren.forEach(translation.tree.TranslateNode::print);
         System.out.print(")");
     }
+
+    @Override
+    public String toString(){
+        StringBuilder s = new StringBuilder();
+        s.append("(");
+        for(TranslateNode node: leftChildren) {
+            s.append(node.toString());
+        }
+        s.append(link).append(".").append(word);
+        for(TranslateNode node: rightChildren) {
+            s.append(node.toString());
+        }
+        s.append(")");
+        return s.toString();
+    }
 }

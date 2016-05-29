@@ -42,17 +42,18 @@ public class Translator {
         List<TranslateTree> trees = Parser.getTrees(sentences);
         getRules();
 
-        /*System.out.println("\n");
+        System.out.println("\n");
 
-        trees.get(1).combine(rules);
+        trees.get(3).combine(rules);
         System.out.println("\n--------------------------------------------------------------------------\n");
-        trees.get(1).printGrammar();*/
+        trees.get(3).printGrammar();
     }
 
     private static void getSentences() {
         sentences.add("I sat on the chair.");
         sentences.add("Improved output quality are achieved by human intervention.");//Improved output quality can also be achieved by human intervention.
         sentences.add("Machine translation uses a method based on linguistic rules.");
+        sentences.add("I like dogs as well as cats.");
     }
 
     private static void getRules() {

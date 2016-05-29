@@ -91,4 +91,14 @@ public class Grammar {
         }
         return cloned;
     }
+
+    @Override
+    public String toString(){
+        StringBuilder s = new StringBuilder();
+        s.append(partOfSpeech);
+        s.append(number);
+        if (word != null)
+            s.append(".").append(word);
+        return s.toString();
+    }
 }
