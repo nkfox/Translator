@@ -25,18 +25,31 @@ public class Translator {
 
     public static void main(String[] args) throws PersistException {
 
-       /* TranslateGrammar gr = new TranslateGrammar("user",true);
-        Dictionary translator = new Dictionary();
-        List<String> list = translator.getEndings(gr); //getRussianTranslation("user", "сущ.");*/
+        /*Dictionary translator = new Dictionary();
 
-        TranslateGrammar tr = new TranslateGrammar("user",true);
-        Dictionary translator = new Dictionary();
-        //List<String> list = translator.getRussianTranslation("user", "сущ.");
-        List<String> list = translator.getEndings(tr);
+        TranslateGrammar tr = new TranslateGrammar("user",1);
+        List<TranslateGrammar> list = translator.getRussianTranslation(tr);
+        List<TranslateGrammar> list1 = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            list1.addAll(translator.getEndings(list.get(i)));
+        }
         System.out.println(list.size());
+        for(TranslateGrammar s: list1)
+            System.out.println(s.getWord()+" "+ s.getGender());
 
-        for(String s: list)
-        System.out.println(s);
+
+
+        TranslateGrammar tr2 = new TranslateGrammar("leave",2);
+        list = translator.getRussianTranslation(tr2);
+        list1 = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            list1.addAll(translator.getEndings(list.get(i)));
+        }
+        System.out.println(list.size());
+        for(TranslateGrammar s: list1)
+            System.out.println(s.getWord()+" "+ s.getGender());
+
+*/
 
         getSentences();
         List<TranslateTree> trees = Parser.getTrees(sentences);
@@ -44,9 +57,21 @@ public class Translator {
 
         System.out.println("\n");
 
-        trees.get(3).combine(rules);
+        int sentenceIndex = 4;
+        trees.get(sentenceIndex).combine(rules);
         System.out.println("\n--------------------------------------------------------------------------\n");
-        trees.get(3).printGrammar();
+        trees.get(sentenceIndex).printGrammar();
+
+        List<List<TranslateGrammar>> translations = trees.get(sentenceIndex).translate();
+        System.out.println("\n--------------------------------------------------------------------------\n");
+        int i=0;
+        for(List<TranslateGrammar> translation:translations){
+            if (i++==2) break;
+            for(TranslateGrammar word: translation){
+                System.out.print(word.getWord()+" ");
+            }
+            System.out.println();
+        }
     }
 
     private static void getSentences() {
@@ -54,6 +79,7 @@ public class Translator {
         sentences.add("Improved output quality are achieved by human intervention.");//Improved output quality can also be achieved by human intervention.
         sentences.add("Machine translation uses a method based on linguistic rules.");
         sentences.add("I like dogs as well as cats.");
+        sentences.add("user left the room.");
     }
 
     private static void getRules() {

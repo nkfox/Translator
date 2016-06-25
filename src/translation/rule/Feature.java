@@ -1,7 +1,9 @@
 package translation.rule;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -45,6 +47,34 @@ public class Feature {
         return value;
     }
 
+    public boolean isDependent() {
+        for (String dependency : dependencies) {
+            for (int i = 0; i < dependency.length(); i++)
+                if (dependency.charAt(i) >= 'a' && dependency.charAt(i) <= 'z')
+                    return true;
+        }
+        return false;
+    }
+
+    public Map<String, String> getDependencyValues() {
+        Map<String, String> values = new HashMap<>();
+        for (String dependency : dependencies)
+            values.put(dependency, value);
+        dependencies.clear();
+        return values;
+    }
+
+    public void putDependencyValues(Map<String,String> values){
+        for(int i=0;i<dependencies.size();i++){
+            String dep = dependencies.get(i);
+            String val = values.get(dep.toUpperCase());
+            if (val!=null){
+                value = val;
+                dependencies.remove(i);
+            } else i++;
+        }
+    }
+
     @Override
     public Feature clone() {
         Feature cloned = new Feature(value);
@@ -53,7 +83,7 @@ public class Feature {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder s = new StringBuilder();
         if (value != null)
             s.append(".").append(value);

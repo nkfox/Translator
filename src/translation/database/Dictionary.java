@@ -4,67 +4,28 @@ import translation.tree.TranslateGrammar;
 import java.sql.*;
 import java.util.*;
 
-
 public class Dictionary {
 
     private static ConnectionPool pool = ConnectionPool.getInstance();
     private ResourceBundle queries = ResourceBundle.getBundle("queries");
     private ResourceBundle files = ResourceBundle.getBundle("files");
 
-    public static void main(String[] args) throws PersistException {
-        TranslateGrammar tr = new TranslateGrammar("user",true);
-        Dictionary translator = new Dictionary();
-        //List<String> list = translator.getRussianTranslation("user", "сущ.");
-        List<String> list1 = translator.getEndings(tr);
-        System.out.println();
-       /* Connection connection = pool.getConnection();
-        //URL к базе состоит из протокола:подпротокола://[хоста]:[порта_СУБД]/[БД] и других_сведений
-        String url = "jdbc:sqlserver://localhost:1433;databaseName=MT;integratedSecurity=true;";
-        //Имя пользователя БД
-        String name = "VITALIK\\VITALIK";
-        //Пароль
-        String password = "123456";
-        try {
-            //Загружаем драйвер
-           *//* Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            System.out.println("Драйвер подключен");*//*
-            //Создаём соединение
-            connection = DriverManager.getConnection(url);
-            System.out.println("Соединение установлено");
-            Statement statement = connection.createStatement();
-            //fillRGramTable(connection);
-            //fillFGroupEndingTables(connection);
-            //fillLexemeBasesTable(connection);
-            //BASECONNECTION(connection);
-            List<String> list = getRussianTranslation("battery", "сущ.", connection);
-            List<String> list1 = getEndings(list.get(3), connection);
-            System.out.println();
-        } catch (Exception ex) {
-            //выводим наиболее значимые сообщения
-            Logger.getLogger(Translator.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Translator.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }*/
-
-    }
-
-    public List<String> getRussianTranslation(String word, String partOfSpeech) throws PersistException {
-        List<String> translations = new ArrayList<>();
+    public List<TranslateGrammar> getRussianTranslation(TranslateGrammar translateGrammar) throws PersistException {
+        List<TranslateGrammar> translations = new ArrayList<>();
         try {
             try(Connection connection = pool.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(queries.getString("QUERY.TARGET.SELECT"))) {
-                preparedStatement.setString(1, word);
-                preparedStatement.setString(2, partOfSpeech);
+                String word = translateGrammar.getEnglishWord();
+                String partofspeech = translateGrammar.getPartOfSpeech();
+                preparedStatement.setString(1, translateGrammar.getEnglishWord());
+                preparedStatement.setString(2, translateGrammar.getPartOfSpeech());
                 ResultSet result = preparedStatement.executeQuery();
                 while (result.next()) {
-                    translations.add(result.getString(1));
+                    TranslateGrammar tr = translateGrammar.clone();
+                    tr.setWord(result.getString(1));
+                    translations.add(tr);
                 }
+                connection.close();
             }
         } catch (SQLException e) {
             throw new PersistException("Wrong transaction in getRussianTranslation()");
@@ -94,22 +55,24 @@ public class Dictionary {
         return map;
     }
 
-    public List<String> getEndings(TranslateGrammar translateGrammar) throws  PersistException {
+    public List<TranslateGrammar> getEndings(TranslateGrammar translateGrammar) throws  PersistException {
 
         Connection connection = pool.getConnection();
         Map<Integer, String> fGroups = getRussianBase(translateGrammar.getWord(), connection);
-        List<String> result = new ArrayList<>();
+        List<TranslateGrammar> result = new ArrayList<>();
         if (fGroups != null) {
             for (Integer s : fGroups.keySet()) {
                 Integer fgroupId = s  ;
-                if(translateGrammar.getGender() == null && translateGrammar.getPartOfSpeech().equals("C")  )
+                if(translateGrammar.getGender() == null && translateGrammar.getPartOfSpeech().equals("с")  )
                     setGender(translateGrammar, s, connection);
                 String sql = generateSQL(translateGrammar);
                 try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
                     preparedStatement.setInt(1, fgroupId);
                     ResultSet rs = preparedStatement.executeQuery();
                     while (rs.next()) {
-                        result.add(fGroups.get(s).trim() + rs.getString(1).trim());
+                        TranslateGrammar tr = translateGrammar.clone();
+                        tr.setWord(fGroups.get(s).trim() + rs.getString(1).trim());
+                        result.add(tr);
                     }
                 } catch (SQLException e) {
                     throw new PersistException(e);
@@ -161,7 +124,7 @@ public class Dictionary {
             where += translateGrammar.getCase() + "' ";
         }
         else {
-            where += "and case is NULL ";
+            where += "and [case] is NULL ";
         }
         if (translateGrammar.getTense() != null){
             select += "join Tense on Tense.id = Grammar.tense ";
@@ -220,5 +183,25 @@ public class Dictionary {
         } catch (SQLException e) {
             throw new PersistException(e);
         }
+    }
+
+    public List<TranslateGrammar> translate(TranslateGrammar word){
+        List<TranslateGrammar> list = null;
+        try {
+            list = getRussianTranslation(word);
+        } catch (PersistException e) {}
+        List<TranslateGrammar> list1 = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            try {
+                list1.addAll(getEndings(list.get(i)));
+            } catch (PersistException e) {}
+        }
+
+        System.out.println(list.size()+" "+list1.size());
+
+        for(TranslateGrammar s: list1)
+            System.out.println(s.getWord()+" "+ s.getGender());
+
+        return list1;
     }
 }

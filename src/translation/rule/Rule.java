@@ -2,10 +2,7 @@ package translation.rule;
 
 import com.sun.istack.internal.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Nataliia Kozoriz on 06.02.2016.
@@ -102,7 +99,7 @@ public class Rule implements Comparable<Rule> {
             System.out.println("New grammarList");
             for (Grammar grammar : grammarList) {
                 System.out.println("POS " + grammar.partOfSpeech + "     number " + grammar.number);
-                HashMap<String, Feature> features = grammar.features;
+                Map<String, Feature> features = grammar.features;
                 Set<String> keys = features.keySet();
                 for (String key : keys) {
                     System.out.print("Key " + key + "     Value ");

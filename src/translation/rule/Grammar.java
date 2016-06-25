@@ -1,6 +1,7 @@
 package translation.rule;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +15,7 @@ public class Grammar {
     protected String partOfSpeech;
     protected int number;
     protected String word;
-    protected HashMap<String, Feature> features;
+    protected Map<String, Feature> features;
 
     public Grammar() {
         features = new HashMap<>();
@@ -69,7 +70,7 @@ public class Grammar {
         return number;
     }
 
-    public HashMap<String, Feature> getFeatures() {
+    public Map<String, Feature> getFeatures() {
         return features;
     }
 

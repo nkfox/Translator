@@ -5,8 +5,10 @@ import translation.rule.Rule;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by Nataliia Kozoriz on 06.02.2016.
@@ -50,9 +52,9 @@ public class TranslateTree {
             String linkName = info.get(0);
             TranslateNode parent = nodes.get(Integer.valueOf(info.get(2)));
             TranslateNode child = nodes.get(Integer.valueOf(info.get(4)));
-            if (linkName.equals("mwe") || linkName.equals("prt")){
+            if (linkName.equals("mwe") || linkName.equals("prt")) {
                 parent.word = parent.word + " " + child.word;
-                for(TranslateGrammar grammar :parent.grammar){
+                for (TranslateGrammar grammar : parent.grammar) {
                     grammar.englishWord = parent.word;
                 }
 
@@ -92,11 +94,79 @@ public class TranslateTree {
 
     public void printGrammar() {
         List<TranslateGrammar> grammars = root.rightChildren.get(0).grammar;
-        int i=0;
-        for(TranslateGrammar grammar:grammars){
-            System.out.println("Translation #"+i++);
+        int i = 0;
+        for (TranslateGrammar grammar : grammars) {
+            System.out.println("Translation #" + i++);
             grammar.print();
             System.out.println("--------------------------------------------------------------------------");
+        }
+    }
+
+    public List<List<TranslateGrammar>> translate() {
+        List<List<TranslateGrammar>> listedGrammars = getListedGrammars();
+        int i = 0;
+        while (i < listedGrammars.size()) {
+            if (i==2) break;
+            List<TranslateGrammar> sentence = listedGrammars.get(i);
+            boolean changed = true;
+            while (changed) {
+                changed = false;
+                int j = 0;
+                while (j<sentence.size()) {
+                    TranslateGrammar word = sentence.get(j);
+                    if (!word.isTranslated() && word.canBeTranslated()) {
+                        changed = true;
+                        translateWord(listedGrammars,sentence,j);
+                    }
+                    j++;
+                }
+            }
+            i++;
+        }
+        return listedGrammars;
+    }
+
+    private List<List<TranslateGrammar>> getListedGrammars() {
+        List<TranslateGrammar> treeGrammars = root.rightChildren.get(0).grammar;
+        List<List<TranslateGrammar>> listedGrammars = new ArrayList<>();
+
+        for (TranslateGrammar grammar : treeGrammars) {
+            List<TranslateGrammar> list = new ArrayList<>();
+            grammar.getList(list);
+            listedGrammars.add(list);
+        }
+        return listedGrammars;
+    }
+
+    private void translateWord(List<List<TranslateGrammar>> listedGrammars, List<TranslateGrammar> sentence, int wordIndex){
+        TranslateGrammar word = sentence.get(wordIndex);
+        List<TranslateGrammar> translations = word.translate();
+        int k = 0;
+        for(TranslateGrammar translation:translations) {
+            List<TranslateGrammar> copiedSentence;
+            if (k++==0)
+                continue;
+            else {
+                copiedSentence = copyList(sentence);
+                listedGrammars.add(copiedSentence);
+            }
+            copiedSentence.set(wordIndex,translation);
+            deleteDependencies(copiedSentence,wordIndex);
+
+        }
+        sentence.set(wordIndex,translations.get(0));
+        deleteDependencies(sentence,wordIndex);
+    }
+
+    private List<TranslateGrammar> copyList(List<TranslateGrammar> list){
+        return list.stream().map(TranslateGrammar::clone).collect(Collectors.toList());
+    }
+
+    private void deleteDependencies(List<TranslateGrammar> sentence, int mainWordIndex){
+        Map<String,String> dependencies = sentence.get(mainWordIndex).getDependencies();
+        for(int i=0;i<sentence.size();i++){
+            if (i!=mainWordIndex)
+                sentence.get(i).putDependencies(dependencies);
         }
     }
 }
