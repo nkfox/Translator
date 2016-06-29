@@ -66,9 +66,9 @@ public class Translator {
         System.out.println("\n--------------------------------------------------------------------------\n");
         int i=0;
         for(List<TranslateGrammar> translation:translations){
-            if (i++==2) break;
+            //if (i++==2) break;
             for(TranslateGrammar word: translation){
-                System.out.print(word.getWord()+" ");
+                System.out.print(word.getWord().toLowerCase()+" ");
             }
             System.out.println();
         }
@@ -79,7 +79,7 @@ public class Translator {
         sentences.add("Improved output quality are achieved by human intervention.");//Improved output quality can also be achieved by human intervention.
         sentences.add("Machine translation uses a method based on linguistic rules.");
         sentences.add("I like dogs as well as cats.");
-        sentences.add("user left the room.");
+        sentences.add("user analyzed black robot");
     }
 
     private static void getRules() {

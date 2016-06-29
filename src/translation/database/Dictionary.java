@@ -1,6 +1,7 @@
 package translation.database;
 import translation.tree.TranslateGrammar;
 
+import java.io.FileNotFoundException;
 import java.sql.*;
 import java.util.*;
 
@@ -25,7 +26,6 @@ public class Dictionary {
                     tr.setWord(result.getString(1));
                     translations.add(tr);
                 }
-                connection.close();
             }
         } catch (SQLException e) {
             throw new PersistException("Wrong transaction in getRussianTranslation()");
@@ -173,13 +173,15 @@ public class Dictionary {
         String sql = " select Gender.value from Gender    " +
                 "               join Grammar on Grammar.gender = Gender.id " +
                 "               join grammar_ending_fgroup on grammar_ending_fgroup.Grammar_id = Grammar.id " +
-                "               where grammar_ending_fgroup.Fgroup_id = ? ";
+                "               where grammar_ending_fgroup.Fgroup_id = ? and Grammar.partOfSpeech = 1 ";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, fgroup);
             ResultSet rs = preparedStatement.executeQuery();
-            rs.next();
-            String str = rs.getString(1).trim();
-            translateGrammar.setGender(str);
+            if (rs.next())
+            {
+                String str = rs.getString(1).trim();
+                translateGrammar.setGender(str);
+            }
         } catch (SQLException e) {
             throw new PersistException(e);
         }
@@ -202,6 +204,11 @@ public class Dictionary {
         for(TranslateGrammar s: list1)
             System.out.println(s.getWord()+" "+ s.getGender());
 
+
+        if(list1.isEmpty()) {
+            word.setWord(word.getEnglishWord());
+            list1.add(word);
+        }
         return list1;
     }
 }

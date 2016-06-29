@@ -19,8 +19,8 @@ public class ConnectionPool {
         dataSource.setUrl("jdbc:sqlserver://localhost:1433;databaseName=MT;integratedSecurity=true;");
 
         dataSource.setInitialSize(2);
-        dataSource.setMaxIdle(10);
-        dataSource.setMaxTotal(15);
+        dataSource.setMaxIdle(4000);
+        dataSource.setMaxTotal(4000);
     }
 
 

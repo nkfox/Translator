@@ -19,6 +19,7 @@ public class TranslateTree {
     private TranslateNode root;
 
     private HashMap<String, Integer> dependencies;
+    static List<TranslateGrammar> translated = new ArrayList<>();
 
     public TranslateTree(List<String> tags, List<String> links) {
         makeTree(tags, links);
@@ -106,7 +107,7 @@ public class TranslateTree {
         List<List<TranslateGrammar>> listedGrammars = getListedGrammars();
         int i = 0;
         while (i < listedGrammars.size()) {
-            if (i==2) break;
+            //if (i==2) break;
             List<TranslateGrammar> sentence = listedGrammars.get(i);
             boolean changed = true;
             while (changed) {
@@ -116,6 +117,7 @@ public class TranslateTree {
                     TranslateGrammar word = sentence.get(j);
                     if (!word.isTranslated() && word.canBeTranslated()) {
                         changed = true;
+                        translated.add(word.clone());
                         translateWord(listedGrammars,sentence,j);
                     }
                     j++;
